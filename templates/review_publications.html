@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review Publications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% include "header.html" %}
+
+    <h2>Fetched Publications</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>Year</th>
+                <th>Citations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pub in publications %}
+            <tr>
+                <td class="center">{{ loop.index }}</td>
+                <td>{{ pub.title }}</td>
+                <td>{{ pub.authors }}</td>
+                <td class="center">{{ pub.year }}</td>
+                <td class="center">{{ pub.citations }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <!-- Button to go to editable page -->
+    <form action="{{ url_for('edit_publications', user_id=user_id) }}" method="POST">
+        <!-- Send publications JSON via hidden input -->
+        <input type="hidden" name="publications" value='{{ publications|tojson|safe }}'>
+
+        <button type="submit">✏️ Edit Publications</button>
+    </form>
+</body>
+</html>

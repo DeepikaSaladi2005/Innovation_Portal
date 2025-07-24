@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ user.name }} - Publications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body class="p-4">
+
+    {% include "header.html" %}
+
+    <h2>📄 Publications for {{ user.name }}</h2>
+    <p><b>Email:</b> {{ user.email }}</p>
+    <p><b>Department:</b> {{ user.department }}</p>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>Year</th>
+                <th>Citations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pub in publications %}
+            <tr>
+                <td>{{ pub.title }}</td>
+                <td>{{ pub.authors }}</td>
+                <td>{{ pub.year }}</td>
+                <td>{{ pub.citations }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        <a href="/candidates">⬅ Back to Candidates</a>
+    </p>
+</body>
+</html>

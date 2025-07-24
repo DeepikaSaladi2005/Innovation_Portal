@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Publications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        input, textarea {
+            width: 95%;
+        }
+    </style>
+</head>
+<body>
+
+    {% include "header.html" %}
+
+    <h2>Edit Publications</h2>
+
+    <form method="POST" action="{{ url_for('save_publications', user_id=user_id) }}">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Authors</th>
+                    <th>Year</th>
+                    <th>Citations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pub in publications %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    
+                    <!-- Existing fields -->
+                    <td><input name="title_{{ loop.index }}" value="{{ pub.title }}"></td>
+                    <td><input name="authors_{{ loop.index }}" value="{{ pub.authors }}"></td>
+                    <td><input name="year_{{ loop.index }}" value="{{ pub.year }}"></td>
+                    <td><input name="citations_{{ loop.index }}" value="{{ pub.citations }}"></td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <input type="hidden" name="total" value="{{ publications|length }}">
+        <br>
+        <button type="submit">✅ Save Publications</button>
+    </form>
+
+</body>
+</html>

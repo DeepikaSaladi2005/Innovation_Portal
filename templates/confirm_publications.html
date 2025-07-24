@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Publications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    {% include "header.html" %}
+
+    <h2>Review & Edit Publications</h2>
+    <form method="POST" action="{{ url_for('save_publications', user_id=user_id) }}">
+        {% for pub in publications %}
+            <div>
+                <label>Title:</label>
+                <input name="title_{{ loop.index }}" value="{{ pub.title }}"><br>
+
+                <label>Authors:</label>
+                <input name="authors_{{ loop.index }}" value="{{ pub.authors }}"><br>
+
+                <label>Year:</label>
+                <input name="year_{{ loop.index }}" value="{{ pub.year }}"><br>
+
+                <label>Citations:</label>
+                <input name="citations_{{ loop.index }}" value="{{ pub.citations }}"><br>
+            </div>
+            <hr>
+        {% endfor %}
+        <input type="hidden" name="total" value="{{ publications|length }}">
+        <button type="submit">Save Publications</button>
+    </form>
+</body>
+</html>
