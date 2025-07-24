@@ -15,39 +15,7 @@ def get_scholar_id(link):
     match = re.search(r"user=([a-zA-Z0-9_-]+)", link)
     return match.group(1) if match else None
 
-'''# ✅ Fetch publications using scholarly (safe version)
-def fetch_scholar_publications(scholar_link):
-    scholar_id = get_scholar_id(scholar_link)
-    if not scholar_id:
-        print("❌ No scholar_id extracted from:", scholar_link)
-        return []
 
-    try:
-        author = scholarly.search_author_id(scholar_id)
-        author = scholarly.fill(author, sections=["publications"])
-        print(f"✅ Fetched Author: {author.get('name')}")
-
-        publications = []
-        for pub in author["publications"]:
-            try:
-                pub_data = scholarly.fill(pub)
-                publications.append({
-                    "title": pub_data.get("bib", {}).get("title", ""),
-                    "authors": pub_data.get("bib", {}).get("author", ""),
-                    "year": pub_data.get("bib", {}).get("pub_year", ""),
-                    "citations": pub_data.get("num_citations", 0)
-                })
-            except Exception as e:
-                print("⚠️ Skipping one publication due to error:", e)
-                continue  # skip problematic publication
-
-        print(f"✅ Total Valid Publications Fetched: {len(publications)}")
-        return publications
-
-    except Exception as e:
-        print("❌ Error fetching publications:", e)
-        return []
-'''
 def fetch_scholar_publications(scholar_link):
     scholar_id = get_scholar_id(scholar_link)
     if not scholar_id:
