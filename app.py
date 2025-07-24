@@ -6,11 +6,11 @@ import re, json
 
 app = Flask(__name__)
 
-# ✅ MySQL connection helper
+# MySQL connection helper
 def get_db():
     return mysql.connector.connect(**MYSQL_CONFIG)
 
-# ✅ Extract scholar_id from Google Scholar URL
+#  Extract scholar_id from Google Scholar URL
 def get_scholar_id(link):
     match = re.search(r"user=([a-zA-Z0-9_-]+)", link)
     return match.group(1) if match else None
@@ -54,12 +54,12 @@ def fetch_scholar_publications(scholar_link):
 
 
 
-# ✅ Home route
+# Home route
 @app.route("/")
 def home():
     return "<h2>Welcome to Innovation Portal</h2><a href='/register'>Register</a>"
 
-# ✅ User Registration with auto-create department
+# User Registration with auto-create department
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -98,7 +98,7 @@ def register():
 
     return render_template("register.html")
 
-# ✅ Fetch publications and show read-only table + Edit button
+#  Fetch publications and show read-only table + Edit button
 @app.route("/fetch_publications/<int:user_id>")
 def fetch_publications(user_id):
     db = get_db()
@@ -118,7 +118,7 @@ def fetch_publications(user_id):
     # Show table + Edit button
     return render_template("review_publications.html", user_id=user_id, publications=publications)
 
-# ✅ Show editable table page
+#  Show editable table page
 @app.route("/edit_publications/<int:user_id>", methods=["POST"])
 def edit_publications(user_id):
     publications_json = request.form.get("publications")
