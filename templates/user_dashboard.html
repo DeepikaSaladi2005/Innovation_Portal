@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  {% include 'header.html' %}
+  <div class="container mt-3">
+    <h2>User Dashboard</h2>
+
+    <!-- Publications Section -->
+    <h4 class="mt-4">My Publications</h4>
+    <a class="btn btn-primary mb-3" href="{{ url_for('add_publication') }}">Add New Publication</a>
+    {% if publications %}
+      <table class="table table-striped table-bordered align-middle">
+        <thead>
+          <tr>
+            <th>Title</th><th>Authors</th><th>Year</th><th>Journal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pub in publications %}
+          <tr>
+            <td>{{ pub.title }}</td>
+            <td>{{ pub.authors }}</td>
+            <td>{{ pub.year }}</td>
+            <td>{{ pub.journal }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No publications added yet.</p>
+    {% endif %}
+
+    <!-- Patents Section (Dynamic Fields) -->
+    <h4 class="mt-5">My Patents</h4>
+    <form method="post" action="{{ url_for('add_patent') }}" class="mb-3">
+      <div class="row g-3">
+        {% for field in patent_fields %}
+          <div class="col-md-4">
+            <label class="form-label">{{ field }}</label>
+            <input type="text" class="form-control" name="patent_{{ field }}">
+          </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-success mt-3">Add Patent</button>
+    </form>
+
+    <!-- Commercialization Section (Dynamic Fields) -->
+    <h4 class="mt-5">My Commercializations</h4>
+    <form method="post" action="{{ url_for('add_commercialization') }}" class="mb-3">
+      <div class="row g-3">
+        {% for field in commercialization_fields %}
+          <div class="col-md-4">
+            <label class="form-label">{{ field }}</label>
+            <input type="text" class="form-control" name="comm_{{ field }}">
+          </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-success mt-3">Add Commercialization</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
