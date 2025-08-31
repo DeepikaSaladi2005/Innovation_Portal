@@ -85,4 +85,3 @@ MYSQL_CONFIG = {
 # Run the app
 python app.py
 
-
