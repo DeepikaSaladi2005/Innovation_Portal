@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+  
+  {% include 'header.html' %}
+  
+  <div class="main-content container-fluid">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Admin Dashboard</h2>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="bi bi-download"></i>Download Reports
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{{ url_for('download_report', report_type='publications') }}">Publications (CSV)</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('download_report', report_type='patents') }}">Patents (CSV)</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('download_report', report_type='commercializations') }}">Commercializations (CSV)</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <form method="get" action="{{ url_for('admin_dashboard') }}" class="mb-5 d-flex" style="max-width: 500px;">
+      <input type="text" name="search" class="form-control me-2" placeholder="Search users by name or email..." value="{{ search }}">
+      <button class="btn btn-primary d-flex align-items-center" type="submit"><i class="bi bi-search"></i>Search</button>
+    </form>
+
+    <div class="card dashboard-card">
+      <div class="card-header">
+        <i class="bi bi-people-fill"></i>Registered Users
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th><th>Name</th><th>Email</th>
+                <th>Publications</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in users %}
+              <tr>
+                <td>{{ u.id }}</td>
+                <td>{{ u.name }}</td>
+                <td>{{ u.email }}</td>
+                <td><span class="badge bg-primary rounded-pill">{{ u.publication_count }}</span></td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <a class="btn btn-info text-white" href="{{ url_for('view_publications', user_id=u.id) }}">
+                      <i class="bi bi-journal-text"></i>Publications
+                    </a>
+                    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#patents{{u.id}}">
+                      <i class="bi bi-lightbulb"></i>Patents
+                    </button>
+                    <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#comm{{u.id}}">
+                      <i class="bi bi-briefcase"></i>Commercializations
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="collapse" id="patents{{u.id}}">
+                <td colspan="5" class="p-3" style="background-color: #f8f9fa;">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="fw-bold card-title">Patents for {{ u.name }}</h6>
+                      {% if u.patents %}
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                  <tr>
+                                    <th>Title</th>
+                                    <th>Inventors</th>
+                                    {% for field in patent_dynamic_fields %}
+                                      <th>{{ field.field_label }}</th>
+                                    {% endfor %}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for p in u.patents %}
+                                  <tr>
+                                    <td>{{ p.get("title", "-") }}</td>
+                                    <td>{{ p.get("inventors", "-") }}</td>
+                                    {% for field in patent_dynamic_fields %}
+                                      <td>{{ p.get(field.field_name, "-") }}</td>
+                                    {% endfor %}
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                        </div>
+                      {% else %}
+                        <p class="text-muted mb-0">No patents available for this user.</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="collapse" id="comm{{u.id}}">
+                <td colspan="5" class="p-3" style="background-color: #f8f9fa;">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="fw-bold card-title">Commercializations for {{ u.name }}</h6>
+                      {% if u.commercializations %}
+                      <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                          <thead class="table-light">
+                            <tr>
+                              <th>Project Name</th>
+                              {% for field in comm_dynamic_fields %}
+                                <th>{{ field.field_label }}</th>
+                              {% endfor %}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for c in u.commercializations %}
+                            <tr>
+                              <td>{{ c.get("project_name", "-") }}</td>
+                              {% for field in comm_dynamic_fields %}
+                                <td>{{ c.get(field.field_name, "-") }}</td>
+                              {% endfor %}
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                      {% else %}
+                        <p class="text-muted mb-0">No commercialization records for this user.</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dashboard-card">
+      <div class="card-header">
+        <i class="bi bi-tools"></i>Manage Dynamic Fields
+      </div>
+      <div class="card-body p-4">
+        <h5 class="mb-3">Add New Field</h5>
+        <form method="post" action="{{ url_for('add_column') }}" class="row g-3 mb-4 p-3 border rounded">
+            <div class="col-md-4"><label class="form-label">Table</label><select class="form-select" name="table_name" required><option value="patents">Patents</option><option value="commercializations">Commercializations</option></select></div>
+            <div class="col-md-4"><label class="form-label">Field Name</label><input type="text" class="form-control" name="field_name" placeholder="e.g. patent_status" required></div>
+            <div class="col-md-4"><label class="form-label">Field Label</label><input type="text" class="form-control" name="field_label" placeholder="e.g. Patent Status" required></div>
+            <div class="col-md-4"><label class="form-label">Field Type</label><select class="form-select" name="field_type" required><option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="checkbox">Checkbox</option><option value="textarea">Textarea</option><option value="select">Select</option></select></div>
+            <div class="col-md-6"><label class="form-label">Options (for Select)</label><input type="text" class="form-control" name="options" placeholder="Option1|Option2"></div>
+            <div class="col-md-2 d-flex align-items-center pt-3"><div class="form-check"><input type="checkbox" class="form-check-input" name="is_required" value="1"><label class="form-check-label">Required</label></div></div>
+            <div class="col-12"><button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i>Add Field</button></div>
+        </form>
+
+        <h5 class="mb-3 mt-5">Delete Existing Field</h5>
+        <form method="post" action="{{ url_for('delete_column') }}" class="row g-3 p-3 border rounded" onsubmit="return confirm('Are you sure you want to delete this field? This is permanent.');">
+          <div class="col-md-5"><label class="form-label">Table</label><select class="form-select" name="table_name" required><option value="patents">Patents</option><option value="commercializations">Commercializations</option></select></div>
+          <div class="col-md-5"><label class="form-label">Field Name to Delete</label><input type="text" class="form-control" name="field_name" placeholder="e.g. patent_status" required></div>
+          <div class="col-md-2 d-flex align-items-end"><button type="submit" class="btn btn-danger w-100"><i class="bi bi-trash"></i>Delete</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
